@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PPCT", "PPCT\PPCT.csproj", "{A697ECC6-37CA-4582-BB17-31DDA0A66463}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPCT.Components", "PPCT.Components\PPCT.Components.csproj", "{8F3822D7-3218-42E5-AABE-D9EDCF4C9CEC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A697ECC6-37CA-4582-BB17-31DDA0A66463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A697ECC6-37CA-4582-BB17-31DDA0A66463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A697ECC6-37CA-4582-BB17-31DDA0A66463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A697ECC6-37CA-4582-BB17-31DDA0A66463}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F3822D7-3218-42E5-AABE-D9EDCF4C9CEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F3822D7-3218-42E5-AABE-D9EDCF4C9CEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F3822D7-3218-42E5-AABE-D9EDCF4C9CEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F3822D7-3218-42E5-AABE-D9EDCF4C9CEC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B452B8E0-2D6E-40F8-A3BE-C4A1ACE83C50}
+	EndGlobalSection
+EndGlobal

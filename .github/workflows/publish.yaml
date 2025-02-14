@@ -1,0 +1,58 @@
+name: Publish PPCT
+
+on:
+  release:
+    types: [published]  # Triggers when a GitHub Release is published
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get Build Version
+      shell: pwsh
+      run: |
+        Import-Module ./PPCT/Build/GetBuildVersion.psm1
+        Write-Host "RELEASE_TAG: ${{ github.event.release.tag_name }}"
+        echo "BUILD_VERSION=${{ github.event.release.tag_name }}" >> $Env:GITHUB_ENV
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore PPCT/PPCT.sln
+
+    - name: Build PPCT (.NET Tool)
+      run: dotnet build PPCT/PPCT/PPCT.csproj --no-restore -p:Version=$BUILD_VERSION
+
+    - name: Pack PPCT (.NET Tool)
+      run: dotnet pack PPCT/PPCT/PPCT.csproj --no-build --output nupkg -p:Version=$BUILD_VERSION
+
+    - name: Check for changes in PPCT.Components
+      id: check_changes
+      run: |
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^PPCT/PPCT.Components/'; then
+          echo "CHANGED_COMPONENTS=true" >> $GITHUB_ENV
+        else
+          echo "CHANGED_COMPONENTS=false" >> $GITHUB_ENV
+        fi
+
+    - name: Build PPCT.Components (NuGet Package)
+      if: env.CHANGED_COMPONENTS == 'true'
+      run: dotnet build PPCT/PPCT.Components/PPCT.Components.csproj --no-restore -p:Version=$BUILD_VERSION
+
+    - name: Pack PPCT.Components (NuGet Package)
+      if: env.CHANGED_COMPONENTS == 'true'
+      run: dotnet pack PPCT/PPCT.Components/PPCT.Components.csproj --no-build --output nupkg -p:Version=$BUILD_VERSION
+
+    - name: Push PPCT (.NET Tool) to NuGet
+      run: dotnet nuget push nupkg/PPCT.*.nupkg --api-key "${{ secrets.PPCT_DEPLOY_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+    - name: Push PPCT.Components (NuGet Package) to NuGet
+      if: env.CHANGED_COMPONENTS == 'true'
+      run: dotnet nuget push nupkg/PPCT.Components.*.nupkg --api-key "${{ secrets.PPCT_DEPLOY_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
