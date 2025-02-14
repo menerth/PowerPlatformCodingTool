@@ -51,8 +51,8 @@ jobs:
       run: dotnet pack PPCT/PPCT.Components/PPCT.Components.csproj --no-build --output nupkg -p:Version=$BUILD_VERSION
 
     - name: Push PPCT (.NET Tool) to NuGet
-      run: dotnet nuget push nupkg/PPCT.*.nupkg --api-key "${{ secrets.NUGET_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push nupkg/PPCT.*.nupkg --api-key "${{ secrets.PPCT_DEPLOY_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
     - name: Push PPCT.Components (NuGet Package) to NuGet
       if: env.CHANGED_COMPONENTS == 'true'
-      run: dotnet nuget push nupkg/PPCT.Components.*.nupkg --api-key "${{ secrets.NUGET_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push nupkg/PPCT.Components.*.nupkg --api-key "${{ secrets.PPCT_DEPLOY_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
