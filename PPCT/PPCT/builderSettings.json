@@ -1,0 +1,36 @@
+{
+  "outdirectory": "./Models/Dataverse",
+  "suppressINotifyPattern": true,
+  "suppressGeneratedCodeAttribute": true,
+  "language": "CS",
+  "namespace": "PPCT.Models.Dataverse",
+  "serviceContextName": "XrmContext",
+  "generateSdkMessages": true,
+  "generateGlobalOptionSets": false,
+  "emitFieldsClasses": true,
+  "entityTypesFolder": "Entities",
+  "messagesTypesFolder": "Messages",
+  "optionSetsTypesFolder": "OptionSets",
+  "entityNamesFilter": [
+    "pluginassembly",
+    "plugintype",
+    "publisher",
+    "solution",
+    "solutioncomponent",
+    "sdkmessage",
+    "sdkmessagefilter",
+    "sdkmessagepair",
+    "sdkmessageprocessingstep",
+    "sdkmessageprocessingstepimage",
+    "sdkmessageprocessingstepsecureconfig",
+    "serviceendpoint",
+    "entity",
+    "customapi",
+    "pluginpackage"
+  ],
+  "messageNamesFilter": [
+    "examp_*"
+  ],
+  "emitEntityETC": false,
+  "emitVirtualAttributes": false
+}
