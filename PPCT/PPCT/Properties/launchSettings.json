@@ -1,0 +1,19 @@
+{
+  "profiles": {
+    "PPCT": {
+      "commandName": "Project"
+    },
+    "Profile 1": {
+      "commandName": "Project",
+      "commandLineArgs": "assemblies --help"
+    },
+    "Profile 2": {
+      "commandName": "Project",
+      "commandLineArgs": "assemblies"
+    },
+    "Profile 3": {
+      "commandName": "Project",
+      "commandLineArgs": "assemblies add --help"
+    }
+  }
+}

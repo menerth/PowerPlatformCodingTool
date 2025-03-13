@@ -6,22 +6,24 @@ using Newtonsoft.Json;
 using NuGet.Packaging;
 using PPCT.Components;
 using PPCT.Models;
+using PPCT.Models.ConfigFiles;
 using PPCT.Models.Dataverse;
 using PPCT.Services;
+using static PPCT.Models.Enums;
 
-namespace PPCT.Tasks
+namespace PPCT.Tasks.AssembliesTasks
 {
-    public class NugetPackageSourceDecorationTask : ICCPTTask
+    public class SourceDecorationTask : IPPCTTask
     {
         private readonly ServiceClient _serviceClient;
-        private readonly ConsoleArgs _args;
+        private readonly AppInput _appInput;
         private readonly SolutionProcessor _scanner;
         private readonly IConfigurationFileLoader _configLoader;
-        private readonly ILogger<NugetPackageSourceDecorationTask> _log;
+        private readonly ILogger<SourceDecorationTask> _log;
 
-        public NugetPackageSourceDecorationTask(ConsoleArgs consoleArgs, SolutionProcessor solutionScanner, IDataverseConnectionService dataverseConnectionService, IConfigurationFileLoader configurationFileLoader, ILogger<NugetPackageSourceDecorationTask> log)
+        public SourceDecorationTask(AppInput appInput, SolutionProcessor solutionScanner, IDataverseConnectionService dataverseConnectionService, IConfigurationFileLoader configurationFileLoader, ILogger<SourceDecorationTask> log)
         {
-            _args = consoleArgs;
+            _appInput = appInput;
             _serviceClient = dataverseConnectionService.Client;
             _configLoader = configurationFileLoader;
             _scanner = solutionScanner;
@@ -30,30 +32,42 @@ namespace PPCT.Tasks
 
         public async Task<bool> Execute(CancellationToken ct)
         {
-            var config = _configLoader.LoadConfigurationFile<ConfigurationFile>();
-
+            var config = _configLoader.LoadConfigurationFile<AssembliesConfig>(_appInput.Path);
             _log.LogTrace("Config file loaded:\n{content}", JsonConvert.SerializeObject(config, Formatting.Indented));
 
+            if (AssembliesMode.Nuget.ToString().Equals(config.Mode, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return await RunNugetVariant(config, ct);
+            }
+            else
+            {
+                _log.LogWarning("This is an upcoming feature not yet available");
+                return true;
+            }
+        }
+
+        private async Task<bool> RunNugetVariant(AssembliesConfig config, CancellationToken ct = default)
+        {
             var packageIds = GetPackagesIds(config).ToList();
-            var solution = await DataverseMethods.GetSolutionInformation(_serviceClient, config.NugetPackage.DataverseSolutionName).ConfigureAwait(false);
+            var solution = await DataverseMethods.GetSolutionInformation(_serviceClient, config.Artifact.DataverseSolutionName);
 
             var searchStrings = packageIds.Select(x => $"{solution.publisher_solution.CustomizationPrefix}_{x}").ToList();
 
-            var pluginData = await GetPluginTypesExpanded(searchStrings).ConfigureAwait(false);
-            var customApiData = await GetCustomApiTypesExpanded(searchStrings).ConfigureAwait(false);
+            var pluginData = await GetPluginTypesExpanded(searchStrings);
+            var customApiData = await GetCustomApiTypesExpanded(searchStrings);
 
             var attributes = pluginData.Concat(customApiData).GroupBy(x => x.Item1).ToDictionary(x => x.Key, x => x.Select(y => y.Item2));
 
             _log.LogInformation("Found {count} plugin(s) and {count2} custom api(s)", pluginData.Count, customApiData.Count);
 
-            await _scanner.ScanSolution(config.SolutionPath, attributes).ConfigureAwait(false);
+            await _scanner.ScanSolution(config.SolutionPath, attributes);
 
             return true;
         }
 
-        private IEnumerable<string> GetPackagesIds(ConfigurationFile config)
+        private IEnumerable<string> GetPackagesIds(AssembliesConfig config)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), config.NugetPackage.NugetPackagePath);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), config.Artifact.BuildArtifactPath);
             _log.LogTrace("Searching for packages...");
 
             var packages = Directory.GetFiles(path, "*.nupkg");
@@ -126,7 +140,7 @@ namespace PPCT.Tasks
                 var attribute = new DataverseRegistrationAttribute(x.GetAttributeValue<string>(CustomAPI.Fields.UniqueName));
                 attribute.RegistrationType = RegistrationTypeEnum.CustomApi;
 
-                return new Tuple<string, DataverseRegistrationAttribute>(x.GetAttributeValue<AliasedValue>("type.typename").Value as string, attribute);
+                return new Tuple<string, DataverseRegistrationAttribute>((string)x.GetAttributeValue<AliasedValue>("type.typename").Value, attribute);
             }).ToList();
 
             return attributes;

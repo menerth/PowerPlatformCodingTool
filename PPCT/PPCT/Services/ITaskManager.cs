@@ -5,6 +5,6 @@ namespace PPCT.Services
 {
     public interface ITaskManager
     {
-        ICCPTTask GetTask(Enums.PPCTTask task);
+        IPPCTTask GetTask(AppInput appInput);
     }
 }

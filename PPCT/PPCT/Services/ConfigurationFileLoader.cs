@@ -7,9 +7,19 @@ namespace PPCT.Services
     {
         private readonly ILogger<ConfigurationFileLoader> _log = log;
 
-        public T LoadConfigurationFile<T>()
+        public T LoadConfigurationFile<T>(string? path)
         {
-            var ppctConfigPath = Directory.GetCurrentDirectory() + "\\ppct.json";
+            string configPath;
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                configPath = Directory.GetCurrentDirectory();
+            }
+            else
+            {
+                configPath = Path.IsPathFullyQualified(path) ? path : Path.Combine(Directory.GetCurrentDirectory(), path);
+            }
+
+            var ppctConfigPath = Path.Combine(configPath, "ppct.json");
 
             _log.LogTrace("Loading configuration file from {path}", ppctConfigPath);
 

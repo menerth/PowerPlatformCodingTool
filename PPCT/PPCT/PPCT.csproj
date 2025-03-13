@@ -7,6 +7,7 @@
 		<PackageId>PPCT</PackageId>
 		<ToolCommandName>ppct</ToolCommandName>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>.Net tool to assist with code development for Power Platform</Description>
@@ -16,16 +17,20 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/menerth/PowerPlatformCodingTool</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
+		<EnforceExtendedAnalyzersRule>true</EnforceExtendedAnalyzersRule>
+	</PropertyGroup>
+	<PropertyGroup>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommandLineParser" Version="2.9.1" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.12.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.13.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.13.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.3" />
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.3" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="NuGet.Packaging" Version="6.13.1" />
+		<PackageReference Include="NuGet.Packaging" Version="6.13.2" />
+		<PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,5 +39,8 @@
 	<ItemGroup>
 		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
-
+	<ItemGroup>
+	  <Folder Include="Generators\" />
+	  <Folder Include="Binders\" />
+	</ItemGroup>
 </Project>

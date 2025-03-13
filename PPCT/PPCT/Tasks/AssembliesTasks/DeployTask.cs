@@ -7,24 +7,25 @@ using Microsoft.Xrm.Sdk.Query;
 using Newtonsoft.Json;
 using PPCT.Components;
 using PPCT.Models;
+using PPCT.Models.ConfigFiles;
 using PPCT.Models.Dataverse;
 using PPCT.Services;
 using static PPCT.Models.Enums;
 
-namespace PPCT.Tasks
+namespace PPCT.Tasks.AssembliesTasks
 {
-    public class NugetPackageDeployTask : ICCPTTask
+    public class DeployTask : IPPCTTask
     {
-        private readonly ILogger<NugetPackageDeployTask> _log;
+        private readonly ILogger<DeployTask> _log;
         private readonly ServiceClient _serviceClient;
         private readonly OrganizationServiceContext _ctx;
-        private readonly ConsoleArgs _args;
+        private readonly AppInput _appInput;
         private readonly NugetPackageScanner _processor;
         private readonly IConfigurationFileLoader _configLoader;
 
-        public NugetPackageDeployTask(ConsoleArgs consoleArgs, IDataverseConnectionService dataverseConnectionService, NugetPackageScanner processor, IConfigurationFileLoader configurationFileLoader, ILogger<NugetPackageDeployTask> log)
+        public DeployTask(AppInput appInput, IDataverseConnectionService dataverseConnectionService, NugetPackageScanner processor, IConfigurationFileLoader configurationFileLoader, ILogger<DeployTask> log)
         {
-            _args = consoleArgs;
+            _appInput = appInput;
             _serviceClient = dataverseConnectionService.Client;
             _ctx = new OrganizationServiceContext(_serviceClient) { MergeOption = MergeOption.NoTracking };
             _processor = processor;
@@ -34,25 +35,38 @@ namespace PPCT.Tasks
 
         public async Task<bool> Execute(CancellationToken ct = default)
         {
-
-            var config = _configLoader.LoadConfigurationFile<ConfigurationFile>();
-
+            var config = _configLoader.LoadConfigurationFile<AssembliesConfig>(_appInput.Path);
             _log.LogTrace("Config file loaded:\n{content}", JsonConvert.SerializeObject(config, Formatting.Indented));
+
+            if (AssembliesMode.Nuget.ToString().Equals(config.Mode, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return await RunNugetVariant(config, ct);
+            }
+            else
+            {
+                _log.LogWarning("This is an upcoming feature not yet available");
+                return true;
+            }
+
+        }
+
+        private async Task<bool> RunNugetVariant(AssembliesConfig config, CancellationToken ct = default)
+        {
             var nugetPackageTypeCode = GetPluginPackageTypeCode();
-            var packages = _processor.ScanPackages(config.NugetPackage, nugetPackageTypeCode);
-            var solution = await DataverseMethods.GetSolutionInformation(_serviceClient, config.NugetPackage.DataverseSolutionName).ConfigureAwait(false);
+            var packages = _processor.ScanPackages(config.Artifact, nugetPackageTypeCode);
+            var solution = await DataverseMethods.GetSolutionInformation(_serviceClient, config.Artifact.DataverseSolutionName);
 
             foreach (var package in packages)
             {
-                var customConfigurations = await ValidatePackageDeploymentConfig(package).ConfigureAwait(false);
+                var customConfigurations = await ValidatePackageDeploymentConfig(package);
 
                 var nugetPackageRecord = await RegisterNuGetPackage(package, solution, ct);
 
                 _log.LogInformation("Nuget package {name} registered with version {version}", package.Name, nugetPackageRecord.Version);
 
-                await RegisterCustomAPIsLogicImplementations(nugetPackageRecord, package, ct).ConfigureAwait(false);
+                await RegisterCustomAPIsLogicImplementations(nugetPackageRecord, package, ct);
 
-                await RegisterPluginLogicImplementations(nugetPackageRecord, package, customConfigurations, solution, ct).ConfigureAwait(false);
+                await RegisterPluginLogicImplementations(nugetPackageRecord, package, customConfigurations, solution, ct);
             }
 
             return true;
@@ -180,7 +194,7 @@ namespace PPCT.Tasks
                 };
                 if (config.IsCustomApi)
                 {
-                    config.AllowedCustomProcessingStepType = (customapi_allowedcustomprocessingsteptype)((x.GetAttributeValue<AliasedValue>($"{customApiAlias}.{CustomAPI.Fields.AllowedCustomProcessingStepType}").Value as OptionSetValue).Value);
+                    config.AllowedCustomProcessingStepType = (customapi_allowedcustomprocessingsteptype)(x.GetAttributeValue<AliasedValue>($"{customApiAlias}.{CustomAPI.Fields.AllowedCustomProcessingStepType}").Value as OptionSetValue).Value;
                 }
 
                 return config;
@@ -223,7 +237,7 @@ namespace PPCT.Tasks
                 };
                 if (config.IsCustomApi)
                 {
-                    config.AllowedCustomProcessingStepType = (customapi_allowedcustomprocessingsteptype)((x.GetAttributeValue<AliasedValue>($"{customApiAlias}.{CustomAPI.Fields.AllowedCustomProcessingStepType}").Value as OptionSetValue).Value);
+                    config.AllowedCustomProcessingStepType = (customapi_allowedcustomprocessingsteptype)(x.GetAttributeValue<AliasedValue>($"{customApiAlias}.{CustomAPI.Fields.AllowedCustomProcessingStepType}").Value as OptionSetValue).Value;
                 }
                 return config;
 

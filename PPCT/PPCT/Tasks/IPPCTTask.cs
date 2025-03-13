@@ -1,6 +1,6 @@
 ﻿namespace PPCT.Tasks
 {
-    public interface ICCPTTask
+    public interface IPPCTTask
     {
         Task<bool> Execute(CancellationToken ct);
     }

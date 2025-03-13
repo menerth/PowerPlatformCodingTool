@@ -2,6 +2,6 @@
 {
     public interface IConfigurationFileLoader
     {
-        T LoadConfigurationFile<T>();
+        T LoadConfigurationFile<T>(string? path);
     }
 }

@@ -10,7 +10,7 @@ namespace PPCT.Services
     public class DataverseConnectionService : IDataverseConnectionService
     {
         private readonly ILogger<DataverseConnectionService> _log;
-        private ServiceClient _client = null;
+        private ServiceClient? _client = null;
         private readonly string ConnectionsFilePath;
         private readonly string TokenPath;
 
@@ -25,7 +25,7 @@ namespace PPCT.Services
                 if (_client == null)
                 {
                     Connect();
-                    return _client;
+                    return _client!;
                 }
 
                 return _client;
@@ -111,7 +111,7 @@ namespace PPCT.Services
             catch (Exception)
             {
                 _log.LogError("Failed to connect to Dataverse.");
-                _log.LogError("Cannot connect: {lastError}\n{lastException}", _client.LastError, _client.LastException);
+                _log.LogError("Cannot connect: {lastError}\n{lastException}", _client!.LastError, _client!.LastException);
                 throw new Exception("Failed to connect to Dataverse.");
             }
 
@@ -152,7 +152,7 @@ namespace PPCT.Services
 
                 try
                 {
-                    parsedConnections = JsonConvert.DeserializeObject<List<StoredConnection>>(configJson);
+                    parsedConnections = JsonConvert.DeserializeObject<List<StoredConnection>>(configJson) ?? [];
                 }
                 catch (Exception)
                 {
@@ -170,7 +170,7 @@ namespace PPCT.Services
             File.WriteAllText(ConnectionsFilePath, configJson);
         }
 
-        private static string ReadLine(string prompt, string regex = null, string defaultValue = null)
+        private static string ReadLine(string prompt, string? regex = null, string? defaultValue = null)
         {
             if (defaultValue != null)
             {
@@ -178,11 +178,11 @@ namespace PPCT.Services
             }
 
             bool isValid = true;
-            string returnedValue = defaultValue;
+            string returnedValue = defaultValue ?? string.Empty;
             do
             {
                 Console.Write(prompt + ": ");
-                string input = Console.ReadLine();
+                string? input = Console.ReadLine();
                 if (input?.Length > 0)
                 {
                     if (regex != null && Regex.IsMatch(input, regex))

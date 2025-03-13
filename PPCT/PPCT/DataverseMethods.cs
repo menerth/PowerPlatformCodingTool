@@ -34,7 +34,7 @@ namespace PPCT
                 }
             };
 
-            var solutionResult = await serviceClient.RetrieveMultipleAsync(solutionQuery).ConfigureAwait(false);
+            var solutionResult = await serviceClient.RetrieveMultipleAsync(solutionQuery);
 
             var solutionRecord = solutionResult.Entities.FirstOrDefault() ?? throw new Exception("Solution not found!!!");
             var solution = solutionRecord.ToEntity<Solution>();

@@ -3,6 +3,7 @@ using NuGet.Frameworks;
 using NuGet.Packaging;
 using PPCT.Components;
 using PPCT.Models;
+using PPCT.Models.ConfigFiles;
 using System.Reflection;
 using static NuGet.Frameworks.FrameworkConstants;
 
@@ -14,9 +15,9 @@ namespace PPCT.Services
         private readonly NuGetFramework _netFramework = new(FrameworkIdentifiers.Net, new Version(4, 6, 2, 0));
         private string[] IgnoredNamespaces = ["System", "Microsoft", "Newtonsoft", "NuGet", "PPCT", "Azure", "AutoMapper"];
 
-        public List<NugetAssemblyPackage> ScanPackages(NugetFileConfig config, int nugetPackageTypeCode)
+        public List<NugetAssemblyPackage> ScanPackages(AssembliesArtifactConfig config, int nugetPackageTypeCode)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), config.NugetPackagePath);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), config.BuildArtifactPath);
             _log.LogTrace("Searching for packages...");
 
             var packagePaths = GetPackagesPaths(path);
