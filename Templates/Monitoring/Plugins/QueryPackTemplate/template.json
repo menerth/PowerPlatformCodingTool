@@ -1,0 +1,102 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters":
+        {
+            "querypacks_DataversePlugins_name": {
+                "defaultValue": "DataversePlugins",
+                "type": "string"
+            },
+            "querypacks_DataversePlugins_location": {
+                "defaultValue": "West Europe",
+                "type": "string"
+            },
+            "querypacks_DataversePlugins_tenantPluginNamespace": {
+                "value": null,
+                "type": "string"
+            }
+        }
+    ,
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.OperationalInsights/querypacks",
+            "apiVersion": "2023-09-01",
+            "name": "[parameters('querypacks_DataversePlugins_name')]",
+            "location": "[parameters('querypacks_DataversePlugins_location')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.OperationalInsights/querypacks/queries",
+            "apiVersion": "2023-09-01",
+            "name": "[concat(parameters('querypacks_DataversePlugins_name'), '/4294e454-8570-4e77-9b4e-c265c4eed6bc')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/querypacks', parameters('querypacks_DataversePlugins_name'))]"
+            ],
+            "properties": {
+                "displayName": "Top custom plugins with high execution time",
+                "description": "This query pack will show the top custom plugins with high execution time in seconds",
+                "body": "[format('dependencies\r\n| where type == ''Plugin''\r\n| where name startswith \"{0}\" // filtering the OOB plugins\r\n| extend executionTimeInMS = todouble(duration)\r\n| extend cd = parse_json(customDimensions)\r\n| extend depth = toint(cd.depth)\r\n| where success == ''True''\r\n| summarize percentiles(executionTimeInMS, 10, 50, 90, 95, 98), NumOfRequests = count(), MaxDepth = max(depth), AvgExecutionTime= toint(avg(executionTimeInMS/1000)) by name\r\n| join kind = inner ( dependencies\r\n| summarize NumOfTotalRequests = count() by name ) on name\r\n| project-away name1\r\n| extend PassRate = todouble(NumOfRequests) * 100 / NumOfTotalRequests\r\n| extend PT95vsPT50Ratio = iif(percentile_executionTimeInMS_50 != 0, percentile_executionTimeInMS_95 / percentile_executionTimeInMS_50, toreal(0))\r\n//| where percentile_executionTimeInMS_90 > 500\r\n| where AvgExecutionTime > 0.5\r\n| project-rename Namespace=name, ExecutionTimeinMS_90=percentile_executionTimeInMS_95, ExecutionCount = NumOfTotalRequests, Depth=MaxDepth\r\n| project Namespace, ExecutionCount, AvgExecutionTime, percentile_executionTimeInMS_50, ExecutionTimeinMS_90, Depth\r\n| order by ExecutionTimeinMS_90 desc', parameters('querypacks_DataversePlugins_tenantPluginNamespace'))]",
+                "related": {
+                    "categories": [],
+                    "resourceTypes": [
+                        "microsoft.insights/components"
+                    ]
+                },
+                "tags": {
+                    "labels": [
+                        "Plugins"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/querypacks/queries",
+            "apiVersion": "2023-09-01",
+            "name": "[concat(parameters('querypacks_DataversePlugins_name'), '/602e1223-4ee7-41b9-8db5-1fc1f7aabd2c')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/querypacks', parameters('querypacks_DataversePlugins_name'))]"
+            ],
+            "properties": {
+                "displayName": "Max depth of custom plugins",
+                "description": "This query pack will show the max depth of custom plugins",
+                "body": "[format('dependencies\r\n| where type == ''Plugin''\r\n| extend cd = parse_json(customDimensions)\r\n| extend depth = toint(cd.depth)\r\n| where name startswith \"{0}\" // filtering the OOB plugins\r\n| where depth > 1\r\n| summarize count(), (P95)=percentiles(duration,95), (P95s)=percentile(toint(duration),95) by depth, name, bin(timestamp, 1d)\r\n| order by depth\r\n| where isnotempty(P95)\r\n| project name, depth, timestamp, count_, P95\r\n| summarize MaxDepth = max(depth) by name\r\n| order by MaxDepth desc, name asc', parameters('querypacks_DataversePlugins_tenantPluginNamespace'))]",
+                "related": {
+                    "categories": [],
+                    "resourceTypes": [
+                        "microsoft.insights/components"
+                    ]
+                },
+                "tags": {
+                    "labels": [
+                        "Plugins"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/querypacks/queries",
+            "apiVersion": "2023-09-01",
+            "name": "[concat(parameters('querypacks_DataversePlugins_name'), '/6e960190-7903-4465-bfb1-6270f71e5423')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/querypacks', parameters('querypacks_DataversePlugins_name'))]"
+            ],
+            "properties": {
+                "displayName": "Custom plugins success rate",
+                "description": "This query pack will show the success rate of custom plugins",
+                "body": "[format('dependencies\n| where type == \"Plugin\"\n| project timestamp, success, correlationId = customDimensions.correlationId, Plugin = customDimensions.pluginType, CustomValidation = customDimensions.stage == 10\n| where Plugin startswith \"{0}\" // filtering the OOB plugins\n| summarize NumberOfRequest = count(), Passed = dcountif(timestamp, success == \"True\"), Failed = dcountif(timestamp, success == \"False\") by tostring(Plugin), CustomValidation\n| extend SuccessRate = todecimal(100*Passed/(Passed + Failed))\n| order by CustomValidation desc, SuccessRate asc\n| limit 20', parameters('querypacks_DataversePlugins_tenantPluginNamespace'))]",
+                "related": {
+                    "categories": [],
+                    "resourceTypes": [
+                        "microsoft.insights/components"
+                    ]
+                },
+                "tags": {
+                    "labels": [
+                        "Plugins"
+                    ]
+                }
+            }
+        }
+    ]
+}
