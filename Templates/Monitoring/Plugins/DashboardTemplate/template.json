@@ -1,0 +1,619 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "pluginsDashboardName": {
+            "defaultValue": "Plugins Dashboard (ENV)",
+            "type": "string"
+        },
+        "appInsightsName": {
+            "defaultValue": "ai-tenant-env",
+            "type": "string"
+        },
+        "dataverseEnvironmentDesignation": {
+            "defaultValue": "DEV",
+            "type": "string"
+        },
+        "tenantPluginNamespace": {
+            "defaultValue": "YourPluginNamespace",
+            "type": "string"
+        },
+        "region": {
+            "defaultValue": "West US",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "appInsightsId": "[resourceId('microsoft.insights/components', parameters('appInsightsName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Portal/dashboards",
+            "apiVersion": "2022-12-01-preview",
+            "name": "[format('{0}-{1}', parameters('pluginsDashboardName'), parameters('dataverseEnvironmentDesignation'))]",
+            "location": "[parameters('region')]",
+            "tags": {
+                "hidden-title": "[format('{0}-{1}', parameters('pluginsDashboardName'), parameters('dataverseEnvironmentDesignation'))]"
+            },
+            "properties": {
+                "lenses": [
+                    {
+                        "order": 0,
+                        "parts": [
+                            {
+                                "position": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "rowSpan": 3,
+                                    "colSpan": 4
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "options",
+                                            "value": {
+                                                "chart": {
+                                                    "metrics": [
+                                                        {
+                                                            "resourceMetadata": {
+                                                                "id": "[variables('appInsightsId')]"
+                                                            },
+                                                            "name": "requests/count",
+                                                            "aggregationType": 7,
+                                                            "namespace": "microsoft.insights/components",
+                                                            "metricVisualization": {
+                                                                "displayName": "Server requests",
+                                                                "resourceDisplayName": "[parameters('appInsightsName')]",
+                                                                "color": "#0078D4"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "title": "Server requests",
+                                                    "titleKind": 2,
+                                                    "visualization": {
+                                                        "chartType": 3
+                                                    },
+                                                    "openBladeOnClick": {
+                                                        "openBlade": true,
+                                                        "destinationBlade": {
+                                                            "bladeName": "ResourceMenuBlade",
+                                                            "parameters": {
+                                                                "id": "[variables('appInsightsId')]",
+                                                                "menuid": "performance"
+                                                            },
+                                                            "extensionName": "HubsExtension",
+                                                            "options": {
+                                                                "parameters": {
+                                                                    "id": "[variables('appInsightsId')]",
+                                                                    "menuid": "performance"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "sharedTimeRange",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                                    "settings": {
+                                        "content": {}
+                                    }
+                                }
+                            },
+                            {
+                                "position": {
+                                    "x": 4,
+                                    "y": 0,
+                                    "rowSpan": 3,
+                                    "colSpan": 5
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "options",
+                                            "value": {
+                                                "chart": {
+                                                    "metrics": [
+                                                        {
+                                                            "resourceMetadata": {
+                                                                "id": "[variables('appInsightsId')]"
+                                                            },
+                                                            "name": "requests/failed",
+                                                            "aggregationType": 7,
+                                                            "namespace": "microsoft.insights/components",
+                                                            "metricVisualization": {
+                                                                "displayName": "Failed requests",
+                                                                "resourceDisplayName": "[parameters('appInsightsName')]",
+                                                                "color": "#EC008C"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "title": "Failed requests",
+                                                    "titleKind": 2,
+                                                    "visualization": {
+                                                        "chartType": 3
+                                                    },
+                                                    "openBladeOnClick": {
+                                                        "openBlade": true,
+                                                        "destinationBlade": {
+                                                            "bladeName": "ResourceMenuBlade",
+                                                            "parameters": {
+                                                                "id": "[variables('appInsightsId')]",
+                                                                "menuid": "failures"
+                                                            },
+                                                            "extensionName": "HubsExtension",
+                                                            "options": {
+                                                                "parameters": {
+                                                                    "id": "[variables('appInsightsId')]",
+                                                                    "menuid": "failures"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "sharedTimeRange",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                                    "settings": {
+                                        "content": {}
+                                    }
+                                }
+                            },
+                            {
+                                "position": {
+                                    "x": 9,
+                                    "y": 0,
+                                    "rowSpan": 3,
+                                    "colSpan": 8
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "resourceTypeMode",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "ComponentId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Scope",
+                                            "value": {
+                                                "resourceIds": [
+                                                    "[variables('appInsightsId')]"
+                                                ]
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartId",
+                                            "value": "0ff27c23-2cb8-4e03-8814-d3abce56b707",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Version",
+                                            "value": "2.0",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "TimeRange",
+                                            "value": "P1D",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "DashboardId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "DraftRequestParameters",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Query",
+                                            "value": "[format('dependencies\r\n| where type == ''Plugin''\r\n| where name startswith \"{0}\" // filtering the OOB plugins\r\n| extend executionTimeInMS = todouble(duration)\r\n| extend cd = parse_json(customDimensions)\r\n| extend depth = toint(cd.depth)\r\n| where success == ''True''\r\n| summarize percentiles(executionTimeInMS, 10, 50, 90, 95, 98), NumOfRequests = count(), MaxDepth = max(depth), AvgExecutionTime= toint(avg(executionTimeInMS/1000)) by name\r\n| join kind = inner ( dependencies\r\n| summarize NumOfTotalRequests = count() by name ) on name\r\n| project-away name1\r\n| extend PassRate = todouble(NumOfRequests) * 100 / NumOfTotalRequests\r\n| extend PT95vsPT50Ratio = iif(percentile_executionTimeInMS_50 != 0, percentile_executionTimeInMS_95 / percentile_executionTimeInMS_50, toreal(0))\r\n//| where percentile_executionTimeInMS_90 > 500\r\n| where AvgExecutionTime > 0.5\r\n| project-rename Namespace=name, ExecutionTimeinMS_90=percentile_executionTimeInMS_95, ExecutionCount = NumOfTotalRequests, Depth=MaxDepth\r\n| project Namespace, ExecutionCount, AvgExecutionTime, percentile_executionTimeInMS_50, ExecutionTimeinMS_90, Depth\r\n| order by ExecutionTimeinMS_90 desc', parameters('tenantPluginNamespace'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "ControlType",
+                                            "value": "FrameControlChart",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "SpecificChart",
+                                            "value": "StackedColumn",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartTitle",
+                                            "value": "Top plugins with high execution duration",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartSubTitle",
+                                            "value": "[parameters('appInsightsName')]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Dimensions",
+                                            "value": {
+                                                "xAxis": {
+                                                    "name": "Namespace",
+                                                    "type": "string"
+                                                },
+                                                "yAxis": [
+                                                    {
+                                                        "name": "ExecutionCount",
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "name": "AvgExecutionTime",
+                                                        "type": "int"
+                                                    },
+                                                    {
+                                                        "name": "percentile_executionTimeInMS_50",
+                                                        "type": "real"
+                                                    },
+                                                    {
+                                                        "name": "ExecutionTimeinMS_90",
+                                                        "type": "real"
+                                                    }
+                                                ],
+                                                "splitBy": [],
+                                                "aggregation": "Sum"
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "LegendOptions",
+                                            "value": {
+                                                "isEnabled": true,
+                                                "position": "Bottom"
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "IsQueryContainTimeRange",
+                                            "value": false,
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+                                    "settings": {
+                                        "content": {}
+                                    }
+                                }
+                            },
+                            {
+                                "position": {
+                                    "x": 0,
+                                    "y": 3,
+                                    "rowSpan": 6,
+                                    "colSpan": 5
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "resourceTypeMode",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "ComponentId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Scope",
+                                            "value": {
+                                                "resourceIds": [
+                                                    "[variables('appInsightsId')]"
+                                                ]
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartId",
+                                            "value": "543d139c-7ef2-4315-b138-f41de587c989",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Version",
+                                            "value": "2.0",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "TimeRange",
+                                            "value": "P1D",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "DashboardId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "DraftRequestParameters",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Query",
+                                            "value": "[format('dependencies\r\n| where type == ''Plugin''\r\n| extend cd = parse_json(customDimensions)\r\n| extend depth = toint(cd.depth)\r\n| where name startswith \"{0}\" // filtering the OOB plugins\r\n| where depth > 1\r\n| summarize count(), (P95)=percentiles(duration,95), (P95s)=percentile(toint(duration),95) by depth, name, bin(timestamp, 1d)\r\n| order by depth\r\n| where isnotempty(P95)\r\n| project name, depth, timestamp, count_, P95\r\n| summarize MaxDepth = max(depth) by name\r\n| order by MaxDepth desc, name asc', parameters('tenantPluginNamespace'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "ControlType",
+                                            "value": "AnalyticsGrid",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "SpecificChart",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartTitle",
+                                            "value": "Looped plugins",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartSubTitle",
+                                            "value": "[parameters('appInsightsName')]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Dimensions",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "LegendOptions",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "IsQueryContainTimeRange",
+                                            "value": false,
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+                                    "settings": {
+                                        "content": {}
+                                    }
+                                }
+                            },
+                            {
+                                "position": {
+                                    "x": 5,
+                                    "y": 3,
+                                    "rowSpan": 6,
+                                    "colSpan": 12
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "resourceTypeMode",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "ComponentId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Scope",
+                                            "value": {
+                                                "resourceIds": [
+                                                    "[variables('appInsightsId')]"
+                                                ]
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartId",
+                                            "value": "15ecda6f-56d5-4b0a-9f9f-735a9b0dd31f",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Version",
+                                            "value": "2.0",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "TimeRange",
+                                            "value": "P1D",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "DashboardId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "DraftRequestParameters",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Query",
+                                            "value": "[format('dependencies\n| where type == \"Plugin\"\n| project timestamp, success, correlationId = customDimensions.correlationId, Plugin = customDimensions.pluginType, CustomValidation = customDimensions.stage == 10\n| where Plugin startswith \"{0}\" // filtering the OOB plugins\n| summarize NumberOfRequest = count(), Passed = dcountif(timestamp, success == \"True\"), Failed = dcountif(timestamp, success == \"False\") by tostring(Plugin), CustomValidation\n| extend SuccessRate = todecimal(100*Passed/(Passed + Failed))\n| order by CustomValidation desc, SuccessRate asc\n| limit 20', parameters('tenantPluginNamespace'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "ControlType",
+                                            "value": "AnalyticsGrid",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "SpecificChart",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartTitle",
+                                            "value": "Custom plugins success rate",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartSubTitle",
+                                            "value": "[parameters('appInsightsName')]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Dimensions",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "LegendOptions",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "IsQueryContainTimeRange",
+                                            "value": false,
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+                                    "settings": {
+                                        "content": {}
+                                    }
+                                }
+                            },
+                            {
+                                "position": {
+                                    "x": 0,
+                                    "y": 9,
+                                    "rowSpan": 5,
+                                    "colSpan": 13
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "resourceTypeMode",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "ComponentId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Scope",
+                                            "value": {
+                                                "resourceIds": [
+                                                    "[variables('appInsightsId')]"
+                                                ]
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartId",
+                                            "value": "12903ad7-7cb1-4e30-ba13-1de209898ea5",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Version",
+                                            "value": "2.0",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "TimeRange",
+                                            "value": "P1D",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "DashboardId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "DraftRequestParameters",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Query",
+                                            "value": "requests\n| project requestType = name , resultCode, operationName = operation_Name, agent = customDimensions.userAgent, performanceBucket, operation_Id, timestamp\n| where resultCode == 429\n",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "ControlType",
+                                            "value": "AnalyticsGrid",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "SpecificChart",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartTitle",
+                                            "value": "Request hitting API rate limits",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "PartSubTitle",
+                                            "value": "[parameters('appInsightsName')]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "Dimensions",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "LegendOptions",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "IsQueryContainTimeRange",
+                                            "value": false,
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+                                    "settings": {}
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "metadata": {
+                    "model": {
+                        "timeRange": {
+                            "value": {
+                                "relative": {
+                                    "duration": 24,
+                                    "timeUnit": 1
+                                }
+                            },
+                            "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+                        },
+                        "filterLocale": {
+                            "value": "en-us"
+                        },
+                        "filters": {
+                            "value": {
+                                "MsPortalFx_TimeRange": {
+                                    "model": {
+                                        "format": "utc",
+                                        "granularity": "auto",
+                                        "relative": "7d"
+                                    },
+                                    "displayCache": {
+                                        "name": "UTC Time",
+                                        "value": "Past 7 days"
+                                    },
+                                    "filteredPartIds": [
+                                        "StartboardPart-MonitorChartPart-90e78758-af32-4c97-9622-ffca5aa8a00f",
+                                        "StartboardPart-MonitorChartPart-90e78758-af32-4c97-9622-ffca5aa8a011",
+                                        "StartboardPart-LogsDashboardPart-90e78758-af32-4c97-9622-ffca5aa8a013",
+                                        "StartboardPart-LogsDashboardPart-90e78758-af32-4c97-9622-ffca5aa8a015",
+                                        "StartboardPart-LogsDashboardPart-90e78758-af32-4c97-9622-ffca5aa8a017",
+                                        "StartboardPart-LogsDashboardPart-90e78758-af32-4c97-9622-ffca5aa8a01b"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
