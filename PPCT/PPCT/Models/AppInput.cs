@@ -10,6 +10,6 @@ namespace PPCT.Models
         public string? Namespace { get; init; } = null;
         public string? Path { get; init; } = null;
 
-        public string TaskFlag => $"{TaskCategory}_{AppTask}";
+        public string TaskFlag => $"{TaskCategory.Name}-{AppTask}";
     }
 }

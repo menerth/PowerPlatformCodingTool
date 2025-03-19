@@ -13,7 +13,7 @@
     },
     "Profile 3": {
       "commandName": "Project",
-      "commandLineArgs": "assemblies add --help"
+      "commandLineArgs": "modelbuilder run"
     }
   }
 }

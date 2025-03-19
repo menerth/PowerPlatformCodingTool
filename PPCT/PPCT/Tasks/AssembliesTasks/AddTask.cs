@@ -11,9 +11,7 @@ namespace PPCT.Tasks.AssembliesTasks
         private readonly ILogger<AddTask> _log = log;
         private readonly AppInput _appInput = appInput;
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public async Task<bool> Execute(CancellationToken ct = default)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        public Task<bool> Execute(CancellationToken ct = default)
         {
             _log.LogInformation("Initializing config file...");
 
@@ -54,7 +52,7 @@ namespace PPCT.Tasks.AssembliesTasks
                 File.WriteAllText(ppctDecoratePath, "ppct assemblies decorate");
                 File.WriteAllText(ppctDeployPath, "ppct assemblies deploy");
 
-                return true;
+                return Task.FromResult(true);
             }
             catch (Exception)
             {

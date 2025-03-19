@@ -6,6 +6,7 @@ using PPCT.Models;
 using PPCT.Services;
 using PPCT.Tasks;
 using PPCT.Tasks.AssembliesTasks;
+using PPCT.Tasks.ModelbuilderTasks;
 using System.CommandLine;
 using System.Reflection;
 using static PPCT.Models.Enums;
@@ -121,14 +122,14 @@ static ServiceProvider CreateServices(AppInput appInput)
         .AddSingleton<IConfigurationFileLoader, ConfigurationFileLoader>()
         .AddSingleton<NugetPackageScanner>()
         .AddSingleton<SolutionProcessor>()
-        .AddKeyedTransient<IPPCTTask, AddTask>($"{typeof(PPCTAssembliesTask)}-{(int)PPCTAssembliesTask.Add}")
-        .AddKeyedTransient<IPPCTTask, DeployTask>($"{typeof(PPCTAssembliesTask)}-{(int)PPCTAssembliesTask.Deploy}")
-        .AddKeyedTransient<IPPCTTask, SourceDecorationTask>($"{typeof(PPCTAssembliesTask)}-{(int)PPCTAssembliesTask.Decorate}")
-        .AddKeyedTransient<IPPCTTask, UpcomingGenericTask>($"{typeof(PPCTAssembliesTask)}-{(int)PPCTAssembliesTask.Init}")
-        .AddKeyedTransient<IPPCTTask, UpcomingGenericTask>($"{typeof(PPCTModelBuilderTask)}-{(int)PPCTModelBuilderTask.Init}")
-        .AddKeyedTransient<IPPCTTask, UpcomingGenericTask>($"{typeof(PPCTModelBuilderTask)}-{(int)PPCTModelBuilderTask.Run}")
-        .AddKeyedTransient<IPPCTTask, UpcomingGenericTask>($"{typeof(PPCTMonitoringTask)}-{(int)PPCTMonitoringTask.Get}")
-        .AddKeyedTransient<IPPCTTask, UpcomingGenericTask>($"{typeof(PPCTWebresourcesTask)}-{(int)PPCTWebresourcesTask.Init}")
+        .AddKeyedTransient<IPPCTTask, AddTask>($"{typeof(PPCTAssembliesTask).Name}-{(int)PPCTAssembliesTask.Add}")
+        .AddKeyedTransient<IPPCTTask, DeployTask>($"{typeof(PPCTAssembliesTask).Name}-{(int)PPCTAssembliesTask.Deploy}")
+        .AddKeyedTransient<IPPCTTask, SourceDecorationTask>($"{typeof(PPCTAssembliesTask).Name}-{(int)PPCTAssembliesTask.Decorate}")
+        .AddKeyedTransient<IPPCTTask, UpcomingGenericTask>($"{typeof(PPCTAssembliesTask).Name}-{(int)PPCTAssembliesTask.Init}")
+        .AddKeyedTransient<IPPCTTask, InitTask>($"{typeof(PPCTModelBuilderTask).Name}-{(int)PPCTModelBuilderTask.Init}")
+        .AddKeyedTransient<IPPCTTask, RunTask>($"{typeof(PPCTModelBuilderTask).Name}-{(int)PPCTModelBuilderTask.Run}")
+        .AddKeyedTransient<IPPCTTask, UpcomingGenericTask>($"{typeof(PPCTMonitoringTask).Name}-{(int)PPCTMonitoringTask.Get}")
+        .AddKeyedTransient<IPPCTTask, UpcomingGenericTask>($"{typeof(PPCTWebresourcesTask).Name}-{(int)PPCTWebresourcesTask.Init}")
         .BuildServiceProvider();
 
     return serviceProvider;

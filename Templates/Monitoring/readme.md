@@ -40,7 +40,7 @@ In case you would like to have something tied to the query pack, you would have 
 2. Populate parameters
 3. Review & deploy
 
-|Query Pack|Version|Link|Documentation|
+|Resource|Version|Link|Documentation|
 |-|-|-|-|
 |![](https://cloud-icons.onemodel.app/azure/other/01085-icon-service-Log-Analytics-Query-Pack.svg) Query Pack|0.1|[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmenerth%2FPowerPlatformCodingTool%2FFEAT-AddModularity%2FTemplates%2FMonitoring%2FPlugins%2FQueryPackTemplate%2Ftemplate.json)|[link](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/query-packs)|
 |![](https://cloud-icons.onemodel.app/azure/general/10015-icon-service-Dashboard.svg) Dashboard|0.1|[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmenerth%2FPowerPlatformCodingTool%2FFEAT-AddModularity%2FTemplates%2FMonitoring%2FPlugins%2FDashboardTemplate%2Ftemplate.json)|[link](https://learn.microsoft.com/en-us/azure/azure-portal/azure-portal-dashboards)|

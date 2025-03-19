@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using PPCT.Models.ConfigFiles;
 
 namespace PPCT.Services
 {
@@ -19,7 +20,9 @@ namespace PPCT.Services
                 configPath = Path.IsPathFullyQualified(path) ? path : Path.Combine(Directory.GetCurrentDirectory(), path);
             }
 
-            var ppctConfigPath = Path.Combine(configPath, "ppct.json");
+            var jsonName = typeof(T).Name == typeof(ModelbuilderConfig).Name ? "ppctbuilder.json" : "ppct.json";
+
+            var ppctConfigPath = Path.Combine(configPath, jsonName);
 
             _log.LogTrace("Loading configuration file from {path}", ppctConfigPath);
 

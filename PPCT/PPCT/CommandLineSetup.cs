@@ -98,7 +98,7 @@ namespace PPCT
 
             var modelbuilderMainCommand = new Command("modelbuilder", "Work with modelbuilder (upcoming)");
 
-            var modelbuilderAddCommand = new Command("init", "Create PPCT tooling config file to be used for running modelbuilder (upcoming)");
+            var modelbuilderAddCommand = new Command("init", "Create PPCT tooling config file to be used for running modelbuilder");
             modelbuilderAddCommand.AddOption(pathOption);
             modelbuilderAddCommand.SetHandler((context) =>
             {
